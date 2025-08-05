@@ -7,6 +7,7 @@ LANGUAGES CXX)
 #global project settings
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 #fetch sfml
 
@@ -31,3 +32,4 @@ target_precompile_headers(${GAME_EXE} PRIVATE "include/PCH.hpp")
 target_link_libraries(${GAME_EXE} PRIVATE sfml-system sfml-graphics sfml-window sfml-audio)
 
 add_subdirectory(src)
+

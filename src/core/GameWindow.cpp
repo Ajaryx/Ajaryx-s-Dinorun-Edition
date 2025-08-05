@@ -34,7 +34,7 @@ void GameWindow::Loop()
 		}
 		mainGame.Update(deltaTime);
 		m_gameWindow->clear();
-		for (const auto& item : m_v_drawableBuffer)
+		for (const auto& item : *m_v_drawableBuffer)
 		{
 			m_gameWindow->draw(*item);
 		}
@@ -44,7 +44,7 @@ void GameWindow::Loop()
 	}
 }
 
-void GameWindow::SetDrawBuffer(const std::vector<std::shared_ptr<sf::Drawable>>& drawableBuffer)
+void GameWindow::SetDrawBuffer(std::vector<std::shared_ptr<sf::Drawable>>* drawableBuffer)
 {
 	m_v_drawableBuffer = drawableBuffer;
 }
