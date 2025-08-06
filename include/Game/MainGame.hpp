@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Game/Player.hpp"
 
 class Layer;
 class MainGame
@@ -18,13 +17,16 @@ public:
 private:
 	void UpdateGroundMove(float deltaTime);
 	void SpawnGroundTile();
+	void UpdatePlayerPhysics(float deltaTime);
 
 	int GenRandomNumber(int min, int max);
-
+	void HandlePlayerJump();
 private:
 	std::vector<Layer*> m_v_drawableBuffer;
 
-	std::shared_ptr<Player> player;
+	std::shared_ptr<sf::RectangleShape> m_player;
+	
+	Layer* m_playerLayer;
 
 	class GameWindow* m_gameWindow;
 
@@ -37,5 +39,7 @@ private:
 private:
 
 	float groundSpeed = 150.f;
-
+	float m_PlayerFallVelocity = 0.f;
+	bool m_grounded = false;
+	const float m_PlayerFallVelocityMultiplyer = 50.f;
 };

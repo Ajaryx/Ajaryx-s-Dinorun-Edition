@@ -12,7 +12,7 @@ GameWindow::GameWindow(const WindowInfo& windowInfo)
 	m_gameWindow = std::make_unique<sf::RenderWindow>(m_WindowSize, m_WindowTitle, m_WindowState, m_contextSettings);
 
 	CamView = sf::View(m_gameWindow->getDefaultView());
-	//CamView.zoom(2.f);
+	CamView.zoom(1.f);
 	m_gameWindow->setView(CamView);
 }
 void GameWindow::Loop()
