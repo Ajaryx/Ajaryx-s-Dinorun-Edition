@@ -10,7 +10,10 @@ GameWindow::GameWindow(const WindowInfo& windowInfo)
 	m_contextSettings = windowInfo.contextSettings;
 
 	m_gameWindow = std::make_unique<sf::RenderWindow>(m_WindowSize, m_WindowTitle, m_WindowState, m_contextSettings);
-	
+
+	CamView = sf::View(m_gameWindow->getDefaultView());
+	//CamView.zoom(2.f);
+	m_gameWindow->setView(CamView);
 }
 void GameWindow::Loop()
 {
@@ -36,7 +39,8 @@ void GameWindow::Loop()
 		m_gameWindow->clear();
 		for (const auto& item : *m_v_drawableBuffer)
 		{
-			m_gameWindow->draw(*item);
+			for(const auto& item2 : item->GetDrawablesLayer())
+			m_gameWindow->draw(*item2);
 		}
 
 
@@ -44,7 +48,7 @@ void GameWindow::Loop()
 	}
 }
 
-void GameWindow::SetDrawBuffer(std::vector<std::shared_ptr<sf::Drawable>>* drawableBuffer)
+void GameWindow::SetDrawBuffer(std::vector<Layer*>* drawableBuffer)
 {
 	m_v_drawableBuffer = drawableBuffer;
 }

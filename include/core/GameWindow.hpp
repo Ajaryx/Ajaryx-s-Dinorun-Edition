@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Game/Layer.hpp"
 
 class GameWindow
 {
@@ -8,7 +8,7 @@ public:
 	~GameWindow() = default;
 
 	void Loop();
-	void SetDrawBuffer(std::vector<std::shared_ptr<sf::Drawable>>* drawableBuffer);
+	void SetDrawBuffer(std::vector<Layer*>* drawableBuffer);
 private:
 
 	std::unique_ptr<sf::RenderWindow> m_gameWindow;
@@ -17,6 +17,8 @@ private:
 	sf::State m_WindowState;
 	sf::ContextSettings m_contextSettings;
 
-	std::vector<std::shared_ptr<sf::Drawable>>* m_v_drawableBuffer;
+	std::vector<Layer*>* m_v_drawableBuffer;
+
+	sf::View CamView;
 
 };

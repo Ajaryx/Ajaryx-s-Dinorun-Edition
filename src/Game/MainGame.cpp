@@ -3,6 +3,7 @@
 #include "Game/Player.hpp"
 #include "core/GameWindow.hpp"
 #include "TextureAtlaseDefines.hpp"
+#include "Game/Layer.hpp"
 
 MainGame::MainGame(GameWindow* gameWindow)
 {
@@ -11,11 +12,15 @@ MainGame::MainGame(GameWindow* gameWindow)
 	m_groundImageAtlas = std::make_unique<sf::Image>("TextureAtlas.png");
 	m_groundTextureAtlas = std::make_unique<sf::Texture>(*m_groundImageAtlas);
 
+	m_spriteGroundLayer = new Layer();
 	player = std::make_shared<Player>();
 
 	//m_v_drawableBuffer.push_back(player);
 
+	m_v_drawableBuffer.push_back(m_spriteGroundLayer);
+
 	m_gameWindow->SetDrawBuffer(&m_v_drawableBuffer);
+	
 }
 
 void MainGame::Start()
@@ -36,25 +41,45 @@ void MainGame::HandleEvent(const std::optional<sf::Event>& evt)
 
 void MainGame::UpdateGroundMove(float deltaTime)
 {
+	for (auto it = m_v_ground.begin(); it != m_v_ground.end();)
+	{
+		it->get()->move(sf::Vector2f(-groundSpeed * deltaTime, 0.f));
 
+		if (it->get()->getPosition().x + it->get()->getScale().x * 16 <= 0.f)
+		{
+			it = m_v_ground.erase(it);
+			m_spriteGroundLayer->DeleteDrawable(m_spriteGroundLayer->GetDrawablesLayer().cbegin());
+		}
+		else
+		{
+			it++;
+		}
+	}
 }
 void MainGame::SpawnGroundTile()
 {
 	sf::Vector2i desertTileLoc = desertSpriteVec[GenRandomNumber(0, desertSpriteVec.size()-1)];
-	m_v_spriteGround.push_back(std::make_shared<sf::Sprite>(*m_groundTextureAtlas, sf::IntRect(desertTileLoc, sf::Vector2i(16, 16))));
 
-	auto& newestSprite = m_v_spriteGround[m_v_spriteGround.size() - 1];
-	newestSprite->setScale(sf::Vector2f(4.f, 4.f));
-	if (m_v_spriteGround.size() == 1)
+	auto& newTile = std::make_shared<sf::Sprite>(*m_groundTextureAtlas, sf::IntRect(desertTileLoc, sf::Vector2i(16, 16)));
+	m_spriteGroundLayer->AddDrawable(newTile);
+	m_v_ground.push_back(newTile);
+
+	newTile->setScale(sf::Vector2f(4.f, 4.f));
+
+	if (m_v_ground.size() == 1)
 	{
-		newestSprite->setPosition({ 0, 300 });
+		newTile->setPosition(sf::Vector2f(0.f, 300.f));
 	}
 	else
 	{
-		auto& beforeSprite = m_v_spriteGround[m_v_spriteGround.size() - 2];
-		newestSprite->setPosition(sf::Vector2f(beforeSprite->getPosition().x + beforeSprite->getScale().x * 16, 300));
+		auto& lastTile = m_v_ground[m_v_ground.size() - 2];
+
+		newTile->setPosition(sf::Vector2f(lastTile->getPosition().x + lastTile->getScale().x * 16, 300.f));
+
 	}
-	m_v_drawableBuffer.push_back(newestSprite);
+	
+	
+
 }
 int MainGame::GenRandomNumber(int min, int max)
 {

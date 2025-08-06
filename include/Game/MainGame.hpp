@@ -2,6 +2,7 @@
 
 #include "Game/Player.hpp"
 
+class Layer;
 class MainGame
 {
 public:
@@ -21,14 +22,20 @@ private:
 	int GenRandomNumber(int min, int max);
 
 private:
-	std::vector<std::shared_ptr<sf::Drawable>> m_v_drawableBuffer;
+	std::vector<Layer*> m_v_drawableBuffer;
 
 	std::shared_ptr<Player> player;
 
 	class GameWindow* m_gameWindow;
 
-	std::vector<std::shared_ptr<sf::Sprite>> m_v_spriteGround;
+	Layer* m_spriteGroundLayer;
+	std::vector<std::shared_ptr<sf::Sprite>> m_v_ground;
 
 	std::unique_ptr<sf::Image> m_groundImageAtlas;
 	std::unique_ptr<sf::Texture> m_groundTextureAtlas;
+
+private:
+
+	float groundSpeed = 150.f;
+
 };
