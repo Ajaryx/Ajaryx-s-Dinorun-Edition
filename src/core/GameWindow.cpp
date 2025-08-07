@@ -25,7 +25,7 @@ void GameWindow::Loop()
 	sf::Clock clock;
 	while (m_gameWindow->isOpen())
 	{
-		float deltaTime = clock.restart().asSeconds();
+		m_deltaTime = clock.restart().asSeconds();
 
 		while (std::optional<sf::Event> evt = m_gameWindow->pollEvent())
 		{
@@ -35,7 +35,7 @@ void GameWindow::Loop()
 			}
 			mainGame.HandleEvent(evt);
 		}
-		mainGame.Update(deltaTime);
+		mainGame.Update(m_deltaTime);
 		m_gameWindow->clear();
 		for (const auto& item : *m_v_drawableBuffer)
 		{
@@ -51,4 +51,8 @@ void GameWindow::Loop()
 void GameWindow::SetDrawBuffer(std::vector<Layer*>* drawableBuffer)
 {
 	m_v_drawableBuffer = drawableBuffer;
+}
+float GameWindow::GetDeltaTime() const
+{
+	return m_deltaTime;
 }

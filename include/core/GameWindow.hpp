@@ -9,6 +9,8 @@ public:
 
 	void Loop();
 	void SetDrawBuffer(std::vector<Layer*>* drawableBuffer);
+
+	float GetDeltaTime() const;
 private:
 
 	std::unique_ptr<sf::RenderWindow> m_gameWindow;
@@ -20,5 +22,7 @@ private:
 	std::vector<Layer*>* m_v_drawableBuffer;
 
 	sf::View CamView;
+
+	float m_deltaTime;
 
 };

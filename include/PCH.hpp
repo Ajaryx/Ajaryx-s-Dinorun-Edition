@@ -6,6 +6,8 @@
 #include <vector>
 #include <filesystem>
 #include <random>
+#include <thread>
+#include <chrono>
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
