@@ -11,15 +11,19 @@ MainGame::MainGame(GameWindow* gameWindow)
 	m_groundImageAtlas = std::make_unique<sf::Image>("TextureAtlas.png");
 	m_groundTextureAtlas = std::make_unique<sf::Texture>(*m_groundImageAtlas);
 	m_cacSprite = std::make_unique<sf::Texture>("cactus.png");
-
+	m_font = std::make_unique<sf::Font>("Roboto\\static\\Roboto-Black.ttf");
+	m_scoreText = std::make_shared<sf::Text>(*m_font, "Score: 0");
+	m_highScore = std::make_shared<sf::Text>(*m_font, "High Score: 0");
+	m_highScore->setPosition(sf::Vector2f(400.f, 0.f));
 	m_spriteGroundLayer = new Layer();
 	m_spriteCactusLayer = new Layer();
 	m_playerLayer = new Layer();
 
-	m_player = std::make_shared<sf::RectangleShape>(sf::Vector2f(100.f, 100.f));
-
-	m_playerLayer->AddDrawable(m_player);
+	m_player = std::make_shared<sf::RectangleShape>(sf::Vector2f(50.f, 70.f));
 	
+	m_playerLayer->AddDrawable(m_player);
+	m_playerLayer->AddDrawable(m_scoreText);
+	m_playerLayer->AddDrawable(m_highScore);
 	m_v_drawableBuffer.push_back(m_spriteGroundLayer);
 	m_v_drawableBuffer.push_back(m_spriteCactusLayer);
 	m_v_drawableBuffer.push_back(m_playerLayer);
@@ -41,6 +45,7 @@ void MainGame::Update(float deltaTime)
 	UpdateGroundMove(deltaTime);
 	UpdatePlayerPhysics(deltaTime);
 	HandleJumpPlayer(deltaTime);
+	CheckPlayerCollisionCac();
 }
 void MainGame::HandleEvent(const std::optional<sf::Event>& evt)
 {
@@ -58,8 +63,41 @@ void MainGame::StartSpawnCactusTimer()
 {
 	while (true)
 	{
-		std::this_thread::sleep_for(std::chrono::seconds(GenRandomNumber(minCacSpawner, maxCacSpawner)));
+		std::this_thread::sleep_for(std::chrono::milliseconds(GenRandomNumber(minCacSpawner, maxCacSpawner)));
 		SpawnCactus();
+		score += 1;
+		m_scoreText->setString("Score: " + std::to_string(score));
+		if (score > highScore)
+		{
+			highScore = score;
+			m_highScore->setString("High Score: " + std::to_string(highScore));
+		}
+		switch (score)
+		{
+		case 10:
+			groundSpeed += 50.f;
+			minCacSpawner -= 100;
+			maxCacSpawner -= 100;
+			break;
+		case 20:
+			groundSpeed += 50.f;
+			minCacSpawner -= 100;
+			maxCacSpawner -= 100;
+			break;
+		case 30:
+			groundSpeed += 50.f;
+			minCacSpawner -= 100;
+			maxCacSpawner -= 100;
+			break;
+		case 40:
+			minCacSpawner -= 100;
+			maxCacSpawner -= 100;
+			break;
+		case 50:
+			minCacSpawner -= 100;
+			maxCacSpawner -= 100;
+			break;
+		}
 	}
 }
 void MainGame::SpawnCactus()
@@ -109,6 +147,17 @@ void MainGame::UpdateGroundMove(float deltaTime)
 		}
 	}
 }
+void MainGame::CheckPlayerCollisionCac()
+{
+	for (const auto& item : m_v_cactus)
+	{
+		if (m_player->getGlobalBounds().findIntersection(item->getGlobalBounds()))
+		{
+			score = 0;
+			m_scoreText->setString("Score: " + std::to_string(score));
+		}
+	}
+}
 void MainGame::SpawnGroundTile()
 {
 	sf::Vector2i desertTileLoc = desertSpriteVec[GenRandomNumber(0, desertSpriteVec.size()-1)];
@@ -141,6 +190,15 @@ int MainGame::GenRandomNumber(int min, int max)
 
 	return dist(gen);
 }
+float MainGame::GenRandomNumber(float min, float max)
+{
+	std::random_device seed;
+	std::mt19937 gen(seed());
+
+	std::uniform_real_distribution dist(min, max);
+
+	return dist(gen);
+}
 void MainGame::UpdatePlayerPhysics(float deltaTime)
 {
 	if (!m_grounded && !m_IsJumping)
@@ -165,7 +223,7 @@ void MainGame::HandleJumpPlayer(float deltaTime)
 {
 	if (m_IsJumping)
 	{
-		if (m_PlayerFallVelocity <= m_player->getPosition().y + m_JumpHeight)
+		if (m_PlayerFallVelocity <= m_JumpHeight)
 		{
 			m_grounded = false;
 			m_PlayerFallVelocity += m_PlayerJumpVelocityMultiplyer * deltaTime;

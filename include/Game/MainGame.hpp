@@ -23,6 +23,8 @@ private:
 	void HandlePlayerJump();
 	void StartSpawnCactusTimer();
 	void SpawnCactus();
+	void CheckPlayerCollisionCac();
+	float GenRandomNumber(float min, float max);
 private:
 	std::vector<Layer*> m_v_drawableBuffer;
 	std::unique_ptr<std::thread> spawnCacThread;
@@ -43,14 +45,20 @@ private:
 	std::unique_ptr<sf::Texture> m_cacSprite;
 private:
 
+	int score = 0;
+	int highScore = 0;
 	bool m_IsJumping = false;
-	float groundSpeed = 150.f;
+	float groundSpeed = 300.f;
 	float m_PlayerFallVelocity = 0.f;
-	const float m_JumpHeight = 5.f;
+	const float m_JumpHeight = 20.f;
 	bool m_grounded = false;
 	const float m_PlayerFallVelocityMultiplyer = 50.f;
 	const float m_PlayerJumpVelocityMultiplyer = 70.f;
 
-	int minCacSpawner = 3.f;
-	int maxCacSpawner = 5.f;
+	int minCacSpawner = 700;
+	int maxCacSpawner = 1500;
+
+	std::shared_ptr<sf::Text> m_scoreText;
+	std::shared_ptr<sf::Text> m_highScore;
+	std::unique_ptr<sf::Font> m_font;
 };
